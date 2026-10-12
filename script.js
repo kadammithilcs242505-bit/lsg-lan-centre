@@ -296,6 +296,13 @@ document.addEventListener('DOMContentLoaded', () => {
         body: JSON.stringify(inquiryRecord)
       }).catch(() => {});
 
+      // Store in Firebase Cloud Firestore
+      try {
+        if (window.LSG_Firebase && window.LSG_Firebase.isReady()) {
+          window.LSG_Firebase.saveInquiry(inquiryRecord);
+        }
+      } catch (fbErr) {}
+
       btn.innerHTML = `
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
         Message Sent to Admin!
@@ -1087,6 +1094,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // Fallback gracefully on static setup
       });
 
+      // 4. Store in Firebase Cloud Firestore
+      try {
+        if (window.LSG_Firebase && window.LSG_Firebase.isReady()) {
+          window.LSG_Firebase.saveBooking(reservationRecord);
+        }
+      } catch (fbErr) {}
+
       // Simulate smooth upload & verification submission
       setTimeout(() => {
         // Reset button state
@@ -1171,6 +1185,13 @@ document.addEventListener('DOMContentLoaded', () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(reservationRecord)
       }).catch(() => {});
+
+      // 4. Store in Firebase Cloud Firestore
+      try {
+        if (window.LSG_Firebase && window.LSG_Firebase.isReady()) {
+          window.LSG_Firebase.saveBooking(reservationRecord);
+        }
+      } catch (fbErr) {}
 
       setTimeout(() => {
         confirmCashBtn.disabled = false;
