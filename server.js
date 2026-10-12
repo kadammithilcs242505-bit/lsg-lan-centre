@@ -6,7 +6,24 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-const PORT = 3000;
+// Load environment variables from .env file
+const envPath = path.join(__dirname, '.env');
+if (fs.existsSync(envPath)) {
+  const envContent = fs.readFileSync(envPath, 'utf8');
+  envContent.split('\n').forEach(line => {
+    const trimmed = line.trim();
+    if (trimmed && !trimmed.startsWith('#') && trimmed.includes('=')) {
+      const idx = trimmed.indexOf('=');
+      const key = trimmed.substring(0, idx).trim();
+      const val = trimmed.substring(idx + 1).trim();
+      if (!process.env[key]) {
+        process.env[key] = val;
+      }
+    }
+  });
+}
+
+const PORT = process.env.PORT || 3000;
 const DATA_FILE = path.join(__dirname, 'bookings.json');
 
 // MIME types for static assets
@@ -170,6 +187,21 @@ const server = http.createServer((req, res) => {
     req.on('close', () => {
       sseClients.delete(res);
     });
+    return;
+  }
+
+  // ---------- API: Firebase Config ----------
+  if (req.method === 'GET' && pathname === '/api/config/firebase') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({
+      apiKey: process.env.FIREBASE_API_KEY || "AIzaSyAbnkNWNsNva25q4daK1nTPY1gaG5Y3q9Y",
+      authDomain: process.env.FIREBASE_AUTH_DOMAIN || "lsg-lan-centre.firebaseapp.com",
+      projectId: process.env.FIREBASE_PROJECT_ID || "lsg-lan-centre",
+      storageBucket: process.env.FIREBASE_STORAGE_BUCKET || "lsg-lan-centre.firebasestorage.app",
+      messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID || "723353078189",
+      appId: process.env.FIREBASE_APP_ID || "1:723353078189:web:979812728f285bc59c3924",
+      measurementId: process.env.FIREBASE_MEASUREMENT_ID || "G-CQVZJF944K"
+    }));
     return;
   }
 
