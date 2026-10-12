@@ -1,0 +1,171 @@
+[
+  {
+    "bookingId": "LSG-BK-8411",
+    "stationId": "battle-arena",
+    "stationName": "Gaming PC — Battle Arena",
+    "date": "2026-10-12",
+    "slot": "06:00 PM - 08:00 PM",
+    "duration": "1 Hour(s)",
+    "totalAmount": "₹80",
+    "paymentMethod": "Cash",
+    "customer": {
+      "name": "T083 Mithil Kadam",
+      "phone": "8763542198",
+      "email": "kadammithilcs242505@gmail.com",
+      "discord": "N/A"
+    },
+    "paymentStatus": "Approved",
+    "proof": {
+      "fileName": "Cash Payment at Counter",
+      "fileSize": 0,
+      "fileType": "cash",
+      "dataUrl": null,
+      "note": "Customer will pay physical cash at the front reception desk upon arrival",
+      "uploadedAt": "2026-10-12T04:18:39.135Z"
+    },
+    "createdAt": "2026-10-12T04:18:39.144Z"
+  },
+  {
+    "bookingId": "LSG-BK-6666",
+    "stationId": "racing-sim",
+    "stationName": "Racing Simulator Rig",
+    "date": "2026-10-12",
+    "slot": "06:00 PM - 08:00 PM",
+    "duration": "1 Hour(s)",
+    "totalAmount": "₹120",
+    "paymentMethod": "Cash",
+    "customer": {
+      "name": "T083 Mithil Kadam",
+      "phone": "6857857353",
+      "email": "kadammithilcs242505@gmail.com",
+      "discord": "N/A"
+    },
+    "paymentStatus": "Approved",
+    "proof": {
+      "fileName": "Cash Payment at Counter",
+      "fileSize": 0,
+      "fileType": "cash",
+      "dataUrl": null,
+      "note": "Customer will pay physical cash at the front reception desk upon arrival",
+      "uploadedAt": "2026-10-11T21:52:28.056Z"
+    },
+    "createdAt": "2026-10-11T21:52:28.056Z"
+  },
+  {
+    "bookingId": "LSG-BK-2517",
+    "stationId": "battle-arena",
+    "stationName": "Gaming PC — Battle Arena",
+    "date": "2026-10-12",
+    "slot": "06:00 PM - 08:00 PM",
+    "duration": "1 Hour(s)",
+    "totalAmount": "₹80",
+    "paymentMethod": "Cash",
+    "customer": {
+      "name": "T083 Mithil Kadam",
+      "phone": "9876543276",
+      "email": "kadammithilcs242505@gmail.com",
+      "discord": "N/A"
+    },
+    "paymentStatus": "Approved",
+    "proof": {
+      "fileName": "Cash Payment at Counter",
+      "fileSize": 0,
+      "fileType": "cash",
+      "dataUrl": null,
+      "note": "Customer will pay physical cash at the front reception desk upon arrival",
+      "uploadedAt": "2026-10-11T21:51:05.403Z"
+    },
+    "createdAt": "2026-10-11T21:51:05.409Z"
+  },
+  {
+    "customerName": "Test Cash User",
+    "customerPhone": "+91 9988776655",
+    "customerEmail": "testcash@lsg.com",
+    "customerDiscord": "test#0001",
+    "stationId": "vip-lounge",
+    "date": "2026-10-15",
+    "slot": "06:00 PM - 08:00 PM",
+    "duration": 1,
+    "totalAmount": 150,
+    "paymentMethod": "Cash",
+    "paymentStatus": "Approved",
+    "bookingId": "LSG-BK-2462",
+    "createdAt": "2026-10-11T21:49:29.833Z"
+  },
+  {
+    "bookingId": "LSG-BK-7721",
+    "stationId": "racing-sim",
+    "stationName": "Racing Simulator Rig",
+    "date": "2026-10-12",
+    "slot": "08:00 PM – 10:00 PM",
+    "duration": "2 Hour(s)",
+    "totalAmount": "₹240",
+    "paymentMethod": "Cash",
+    "customer": {
+      "name": "Sameer Khan",
+      "phone": "+91 97722 11002",
+      "email": "sameer.f1@gmail.com",
+      "discord": "ApexSameer#4040"
+    },
+    "paymentStatus": "Approved",
+    "proof": {
+      "fileName": "Cash Payment at Counter",
+      "fileSize": 0,
+      "fileType": "cash",
+      "dataUrl": null,
+      "note": "Customer will pay physical cash at the front reception desk upon arrival",
+      "uploadedAt": "2026-10-12T02:30:00.000Z"
+    },
+    "createdAt": "2026-10-12T02:30:00.000Z"
+  },
+  {
+    "bookingId": "LSG-BK-9182",
+    "stationId": "battle-arena",
+    "stationName": "Gaming PC — Battle Arena",
+    "date": "2026-10-12",
+    "slot": "06:00 PM – 08:00 PM",
+    "duration": "2 Hour(s)",
+    "totalAmount": "₹160",
+    "paymentMethod": "UPI",
+    "customer": {
+      "name": "Aman Sharma",
+      "phone": "+91 98201 54321",
+      "email": "aman.gamer@gmail.com",
+      "discord": "AmanApex#9921"
+    },
+    "paymentStatus": "Approved",
+    "proof": {
+      "fileName": "paytm_transaction.png",
+      "fileSize": 469260,
+      "fileType": "image/png",
+      "dataUrl": "images/payment-scanner.png",
+      "uploadedAt": "2026-10-12T01:47:17.568Z"
+    },
+    "createdAt": "2026-10-12T01:47:17.568Z"
+  },
+  {
+    "bookingId": "LSG-BK-4029",
+    "stationId": "vip-lounge",
+    "stationName": "VIP Gaming PC — L.S.G Lounge",
+    "date": "2026-10-12",
+    "slot": "02:00 PM – 04:00 PM",
+    "duration": "2 Hour(s)",
+    "totalAmount": "₹300",
+    "paymentMethod": "UPI",
+    "customer": {
+      "name": "Rohan Mehra",
+      "phone": "+91 98112 34567",
+      "email": "rohan.fps@yahoo.com",
+      "discord": "RohanViper#1022"
+    },
+    "paymentStatus": "Approved",
+    "proof": {
+      "fileName": "upi_screenshot_rohan.jpg",
+      "fileSize": 312000,
+      "fileType": "image/jpeg",
+      "dataUrl": "images/payment-scanner.png",
+      "uploadedAt": "2026-10-12T00:47:17.568Z"
+    },
+    "createdAt": "2026-10-12T00:47:17.568Z"
+  }
+]
