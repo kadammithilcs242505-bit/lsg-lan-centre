@@ -36,6 +36,10 @@
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             <span>Export CSV</span>
           </button>
+          <button type="button" class="btn-admin btn-admin-secondary" id="firebaseConfigBtn" title="Firebase Firestore Cloud Settings" style="border-color: rgba(255, 179, 0, 0.4); color: #ffb300;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            <span id="firebaseStatusText">Firebase DB</span>
+          </button>
           <button type="button" class="btn-admin btn-admin-primary" id="addWalkinBtn">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             <span>Add Walk-in</span>
@@ -315,12 +319,57 @@
     </div>
   </div>
 
+  <!-- Firebase Config Modal -->
+  <div class="admin-modal-overlay" id="firebaseModalOverlay" role="dialog" aria-modal="true">
+    <div class="admin-modal-box" style="max-width: 520px;">
+      <div class="admin-modal-header">
+        <h3 style="display:flex; align-items:center; gap:8px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffb300" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          Firebase Cloud Firestore Configuration
+        </h3>
+        <button type="button" class="btn-close-modal" id="closeFirebaseModalBtn">&times;</button>
+      </div>
+      <form id="firebaseConfigForm">
+        <div class="admin-modal-body">
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px; line-height: 1.5;">
+            Connect your Google Firebase project to store and sync all bookings &amp; inquiries in real-time on the cloud.
+          </p>
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label style="display:block; font-size: 0.78rem; text-transform:uppercase; color:var(--text-muted); margin-bottom: 4px;">API Key (apiKey)</label>
+            <input type="text" id="fbApiKey" placeholder="AIzaSy..." class="form-input" style="width:100%; padding:10px; background:var(--bg-card); border:1px solid var(--border-color); border-radius:8px; color:var(--text-primary); font-family:monospace; font-size:0.85rem;" required />
+          </div>
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label style="display:block; font-size: 0.78rem; text-transform:uppercase; color:var(--text-muted); margin-bottom: 4px;">Project ID (projectId)</label>
+            <input type="text" id="fbProjectId" placeholder="lsg-lan-centre" class="form-input" style="width:100%; padding:10px; background:var(--bg-card); border:1px solid var(--border-color); border-radius:8px; color:var(--text-primary); font-family:monospace; font-size:0.85rem;" required />
+          </div>
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label style="display:block; font-size: 0.78rem; text-transform:uppercase; color:var(--text-muted); margin-bottom: 4px;">Auth Domain (authDomain)</label>
+            <input type="text" id="fbAuthDomain" placeholder="lsg-lan-centre.firebaseapp.com" class="form-input" style="width:100%; padding:10px; background:var(--bg-card); border:1px solid var(--border-color); border-radius:8px; color:var(--text-primary); font-family:monospace; font-size:0.85rem;" />
+          </div>
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label style="display:block; font-size: 0.78rem; text-transform:uppercase; color:var(--text-muted); margin-bottom: 4px;">App ID (appId)</label>
+            <input type="text" id="fbAppId" placeholder="1:1234567890:web:abcdef" class="form-input" style="width:100%; padding:10px; background:var(--bg-card); border:1px solid var(--border-color); border-radius:8px; color:var(--text-primary); font-family:monospace; font-size:0.85rem;" />
+          </div>
+          <div id="fbTestStatus" style="font-size:0.82rem; margin-top:8px;"></div>
+        </div>
+        <div class="admin-modal-footer">
+          <button type="button" class="btn-admin btn-admin-secondary" id="cancelFirebaseBtn">Cancel</button>
+          <button type="submit" class="btn-admin btn-admin-primary" style="background: linear-gradient(135deg, #ff9800, #ffb300); color: #000; font-weight:700;">Save &amp; Connect Firebase</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Toast Notification -->
   <div class="admin-toast" id="adminToast">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
     <span id="toastMessage">Action completed successfully</span>
   </div>
 
-  <script src="admin.js?v=5.0"></script>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="admin.js?v=6.0"></script>
 </body>
 </html>
