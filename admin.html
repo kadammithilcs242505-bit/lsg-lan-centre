@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>L.S.G LAN CENTRE — Admin Portal &amp; Verification</title>
+  <link rel="stylesheet" href="admin.css?v=5.0">
+  <link rel="icon" type="image/png" href="images/lsg-logo.png">
+</head>
+<body>
+
+  <div class="admin-layout">
+    <!-- Navbar -->
+    <header class="admin-navbar">
+      <div class="admin-navbar-content">
+        <div class="brand-section">
+          <a href="admin.html" class="brand-badge">
+            <img src="images/lsg-logo.png" alt="L.S.G LAN CENTRE Logo" class="brand-logo-img">
+            <div>
+              <div class="brand-title">L.S.G LAN CENTRE</div>
+              <span class="portal-tag">Admin Control Center</span>
+            </div>
+          </a>
+          <div class="system-status">
+            <span class="pulse-dot"></span>
+            <span>Live Sync Active</span>
+          </div>
+        </div>
+
+        <div class="nav-actions">
+          <button type="button" class="btn-admin btn-admin-secondary" id="refreshBtn" title="Refresh bookings data">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            <span>Refresh</span>
+          </button>
+          <button type="button" class="btn-admin btn-admin-secondary" id="exportCsvBtn" title="Download Excel/CSV report">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span>Export CSV</span>
+          </button>
+          <button type="button" class="btn-admin btn-admin-primary" id="addWalkinBtn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Add Walk-in</span>
+          </button>
+          <a href="index.html" class="btn-admin btn-admin-secondary" style="border-color: var(--accent-secondary);" title="Go to customer-facing website">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            <span>Customer Site</span>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+      
+      <!-- Stats KPI Row -->
+      <section class="stats-grid">
+        <!-- Pending Verification Card -->
+        <div class="stat-card">
+          <div class="stat-info">
+            <span>Pending Verification</span>
+            <div class="stat-value pending-color" id="statPendingCount">0</div>
+          </div>
+          <div class="stat-icon pending">⏳</div>
+        </div>
+
+        <!-- Verified / Approved Card -->
+        <div class="stat-card">
+          <div class="stat-info">
+            <span>Verified Bookings</span>
+            <div class="stat-value verified-color" id="statVerifiedCount">0</div>
+          </div>
+          <div class="stat-icon verified">✅</div>
+        </div>
+
+        <!-- Total Revenue Card -->
+        <div class="stat-card">
+          <div class="stat-info">
+            <span>Confirmed Revenue</span>
+            <div class="stat-value revenue-color" id="statRevenueTotal">₹0</div>
+          </div>
+          <div class="stat-icon revenue">💰</div>
+        </div>
+
+        <!-- Total Bookings Card -->
+        <div class="stat-card">
+          <div class="stat-info">
+            <span>Total Reservations</span>
+            <div class="stat-value" id="statTotalBookings">0</div>
+          </div>
+          <div class="stat-icon stations">🎮</div>
+        </div>
+      </section>
+
+      <!-- Live Station Rig Monitor -->
+      <section class="station-monitor-card">
+        <div class="section-head">
+          <h3>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            Station Capacity &amp; Fleet Overview
+          </h3>
+          <span style="font-size: 0.8rem; color: var(--accent-secondary); font-weight: 600;">10:00 AM – 08:00 PM • Vile Parle West, Mumbai</span>
+        </div>
+
+        <div class="rig-cards-row">
+          <div class="rig-status-pill">
+            <div class="rig-icon-box">🖥️</div>
+            <div>
+              <div class="rig-title">Battle Arena PC</div>
+              <div class="rig-count">44 Stations • ₹80/hr</div>
+            </div>
+          </div>
+          <div class="rig-status-pill">
+            <div class="rig-icon-box">👑</div>
+            <div>
+              <div class="rig-title">VIP L.S.G Lounge</div>
+              <div class="rig-count">20 Stations • ₹150/hr</div>
+            </div>
+          </div>
+          <div class="rig-status-pill">
+            <div class="rig-icon-box">🎮</div>
+            <div>
+              <div class="rig-title">PS5 Party Zone</div>
+              <div class="rig-count">4 Consoles • ₹100/hr</div>
+            </div>
+          </div>
+          <div class="rig-status-pill">
+            <div class="rig-icon-box">🏎️</div>
+            <div>
+              <div class="rig-title">Racing Sim Rigs</div>
+              <div class="rig-count">2 Pods • ₹120/hr</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Reservations Management Panel -->
+      <section class="panel-card">
+        <div class="table-toolbar">
+          <!-- Filter Tabs -->
+          <div class="filter-tabs">
+            <button type="button" class="filter-tab active" data-filter="all">All</button>
+            <button type="button" class="filter-tab" data-filter="pending">Pending Verification</button>
+            <button type="button" class="filter-tab" data-filter="cash">💵 Cash on Arrival</button>
+            <button type="button" class="filter-tab" data-filter="approved">Verified / Approved</button>
+            <button type="button" class="filter-tab" data-filter="rejected">Rejected</button>
+          </div>
+
+          <!-- Search & Clear -->
+          <div class="toolbar-controls">
+            <div class="search-box">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="adminSearchInput" placeholder="Search by name, ID, phone...">
+            </div>
+            <button type="button" class="btn-admin btn-admin-danger btn-admin-sm" id="clearDataBtn" title="Clear all reservation records">
+              <span>Clear History</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Table Container -->
+        <div class="table-responsive">
+          <table class="reservations-table">
+            <thead>
+              <tr>
+                <th>Booking ID</th>
+                <th>Customer</th>
+                <th>Gaming Station</th>
+                <th>Date &amp; Slot</th>
+                <th>Amount</th>
+                <th>Payment Mode &amp; Proof</th>
+                <th>Verification Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="reservationsTableBody">
+              <!-- Dynamically populated via admin.js -->
+            </tbody>
+          </table>
+
+          <div class="table-empty-state" id="emptyState" style="display: none;">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg>
+            <h4>No Reservations Found</h4>
+            <p>No bookings match the selected filter criteria. New customer submissions will appear here automatically.</p>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ====== FULL PROOF VIEWER MODAL ====== -->
+  <div class="admin-modal-overlay" id="proofModal" role="dialog" aria-modal="true">
+    <div class="admin-modal-box">
+      <div class="admin-modal-header">
+        <h3 id="modalProofTitle">Payment Verification</h3>
+        <button type="button" class="btn-action-icon" id="closeProofModalBtn">&times;</button>
+      </div>
+
+      <div class="admin-modal-body">
+        <div class="proof-full-preview" id="proofImgWrap">
+          <img id="fullProofImg" src="images/payment-scanner.png?v=2" alt="Payment Proof Screenshot">
+        </div>
+
+        <!-- Cash notice if cash payment -->
+        <div class="cash-desk-notice" id="modalProofCashNotice" style="display: none;">
+          <div class="cash-notice-icon">💵</div>
+          <div class="cash-notice-content">
+            <h4>Cash on Arrival (Pay at Reception Desk)</h4>
+            <p>This customer chose to pay in physical cash upon arrival. No UPI screenshot is required.</p>
+            <div class="cash-collect-highlight">
+              <span>Collect <strong id="modalProofCashAmount" style="color: #34d399; font-size: 1.1rem;">₹80</strong> in cash at the counter before approving.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="proof-meta-grid">
+          <div class="meta-item">
+            <span class="meta-label">Booking Reference:</span>
+            <span class="meta-val booking-code" id="modalProofBookingId">LSG-BK-9182</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Customer Name:</span>
+            <span class="meta-val" id="modalProofCustomer">Aman Sharma</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Payment Method:</span>
+            <span class="meta-val" id="modalProofMethod" style="color: var(--accent-cyan); font-weight: 700;">UPI</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Payable Amount:</span>
+            <span class="meta-val amount-cell" id="modalProofAmount">₹160</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Station:</span>
+            <span class="meta-val" id="modalProofStation">Gaming PC — Battle Arena</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Date &amp; Slot:</span>
+            <span class="meta-val" id="modalProofDate">Today • 06:00 PM – 08:00 PM</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Current Status:</span>
+            <span class="meta-val" id="modalProofStatus">Pending Verification</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-modal-footer">
+        <button type="button" class="btn-admin btn-admin-danger" id="modalRejectBtn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          Reject Payment
+        </button>
+        <button type="button" class="btn-admin btn-admin-primary" id="modalApproveBtn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Verify &amp; Approve
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== ADD WALK-IN MODAL ====== -->
+  <div class="admin-modal-overlay" id="walkinModal" role="dialog" aria-modal="true">
+    <div class="admin-modal-box" style="max-width: 480px;">
+      <div class="admin-modal-header">
+        <h3>Add Walk-in Counter Booking</h3>
+        <button type="button" class="btn-action-icon" id="closeWalkinModalBtn">&times;</button>
+      </div>
+
+      <form id="walkinForm">
+        <div class="admin-modal-body">
+          <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Customer Name *</label>
+            <input type="text" id="walkinName" required placeholder="Player Name" style="padding: 0.75rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border-subtle); border-radius: 10px; color: #fff; font-family: inherit;">
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Phone Number *</label>
+            <input type="tel" id="walkinPhone" required placeholder="+91 98765 43210" style="padding: 0.75rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border-subtle); border-radius: 10px; color: #fff; font-family: inherit;">
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Select Station</label>
+            <select id="walkinStation" style="padding: 0.75rem; background: #1a1a28; border: 1px solid var(--border-subtle); border-radius: 10px; color: #fff; font-family: inherit;">
+              <option value="battle-arena" data-rate="80">Gaming PC — Battle Arena (₹80/hr)</option>
+              <option value="vip-lounge" data-rate="150">VIP Gaming PC — L.S.G Lounge (₹150/hr)</option>
+              <option value="console-zone" data-rate="100">PS5 Console — Party Zone (₹100/hr)</option>
+              <option value="racing-sim" data-rate="120">Racing Simulator Rig (₹120/hr)</option>
+            </select>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Duration</label>
+            <select id="walkinDuration" style="padding: 0.75rem; background: #1a1a28; border: 1px solid var(--border-subtle); border-radius: 10px; color: #fff; font-family: inherit;">
+              <option value="1">1 Hour</option>
+              <option value="2" selected>2 Hours</option>
+              <option value="3">3 Hours</option>
+              <option value="4">4 Hours</option>
+              <option value="8">8 Hours (Full Day)</option>
+            </select>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <label style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Payment Method</label>
+            <select id="walkinPaymentMethod" style="padding: 0.75rem; background: #1a1a28; border: 1px solid var(--border-subtle); border-radius: 10px; color: #fff; font-family: inherit;">
+              <option value="Cash" selected>💵 Cash at Counter (Paid)</option>
+              <option value="UPI">📱 UPI / QR Code (Paid)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="admin-modal-footer">
+          <button type="button" class="btn-admin btn-admin-secondary" id="cancelWalkinBtn">Cancel</button>
+          <button type="submit" class="btn-admin btn-admin-primary">Create Booking</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="admin-toast" id="adminToast">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+    <span id="toastMessage">Action completed successfully</span>
+  </div>
+
+  <script src="admin.js?v=5.0"></script>
+</body>
+</html>
