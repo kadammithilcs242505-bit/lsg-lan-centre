@@ -67,8 +67,14 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (e) {}
   }
 
-  // Load from Server API and LocalStorage
+  // Load from Server API, Firebase Firestore, and LocalStorage
   async function loadReservations() {
+    // 0. Connect to Firebase Firestore if configured
+    if (window.LSG_Firebase && window.LSG_Firebase.isReady()) {
+      initFirebaseSubscription();
+      return;
+    }
+
     // 1. Try fetching from live server API
     try {
       const res = await fetch('/api/bookings');
@@ -395,6 +401,13 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     } catch (e) {}
 
+    // Update in Firebase Cloud Firestore
+    try {
+      if (window.LSG_Firebase && window.LSG_Firebase.isReady()) {
+        window.LSG_Firebase.updateBookingStatus(bookingId, newStatus);
+      }
+    } catch (e) {}
+
     if (newStatus === 'Approved') {
       showToast(`Booking ${bookingId} verified and approved!`);
     } else if (newStatus === 'Rejected') {
@@ -421,6 +434,13 @@ document.addEventListener('DOMContentLoaded', () => {
       await fetch(`/api/bookings/${encodeURIComponent(bookingId)}`, {
         method: 'DELETE'
       });
+    } catch (e) {}
+
+    // Delete from Firebase Cloud Firestore
+    try {
+      if (window.LSG_Firebase && window.LSG_Firebase.isReady()) {
+        window.LSG_Firebase.deleteBooking(bookingId);
+      }
     } catch (e) {}
 
     showToast(`Booking ${bookingId} deleted.`);
@@ -688,6 +708,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       } catch (e) {}
 
+      // Save Walk-in to Firebase Cloud Firestore
+      try {
+        if (window.LSG_Firebase && window.LSG_Firebase.isReady()) {
+          window.LSG_Firebase.saveBooking(newBooking);
+        }
+      } catch (e) {}
+
       closeWalkinModal();
       showToast(`Walk-in booking created for ${name}!`);
     });
@@ -820,7 +847,105 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (e) {}
   }, 2000);
 
+  // ============================================
+  // FIREBASE FIRESTORE CONTROLS & REAL-TIME SYNC
+  // ============================================
+
+  let unsubscribeFirestore = null;
+  function initFirebaseSubscription() {
+    if (!window.LSG_Firebase || !window.LSG_Firebase.isReady()) return;
+    updateFirebaseUIStatus(true);
+    if (unsubscribeFirestore) unsubscribeFirestore();
+    unsubscribeFirestore = window.LSG_Firebase.subscribeBookings((firestoreList) => {
+      if (Array.isArray(firestoreList) && firestoreList.length > 0) {
+        if (reservations.length > 0 && firestoreList.length > reservations.length) {
+          playAlertChime();
+          showToast('🚨 New cloud booking received from Firebase!');
+        }
+        reservations = firestoreList;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(reservations));
+        updateKPIs();
+        renderTable();
+      }
+    });
+  }
+
+  const firebaseConfigBtn = document.getElementById('firebaseConfigBtn');
+  const firebaseModalOverlay = document.getElementById('firebaseModalOverlay');
+  const closeFirebaseModalBtn = document.getElementById('closeFirebaseModalBtn');
+  const cancelFirebaseBtn = document.getElementById('cancelFirebaseBtn');
+  const firebaseConfigForm = document.getElementById('firebaseConfigForm');
+  const fbApiKeyInput = document.getElementById('fbApiKey');
+  const fbProjectIdInput = document.getElementById('fbProjectId');
+  const fbAuthDomainInput = document.getElementById('fbAuthDomain');
+  const fbAppIdInput = document.getElementById('fbAppId');
+  const firebaseStatusText = document.getElementById('firebaseStatusText');
+
+  function updateFirebaseUIStatus(active) {
+    if (firebaseStatusText) {
+      if (active) {
+        firebaseStatusText.textContent = '🔥 Firebase Connected';
+        if (firebaseConfigBtn) firebaseConfigBtn.style.color = '#00f59b';
+      } else {
+        firebaseStatusText.textContent = 'Firebase DB';
+        if (firebaseConfigBtn) firebaseConfigBtn.style.color = '#ffb300';
+      }
+    }
+  }
+
+  function openFirebaseModal() {
+    if (window.LSG_Firebase) {
+      const cfg = window.LSG_Firebase.getConfig() || {};
+      if (fbApiKeyInput) fbApiKeyInput.value = cfg.apiKey && cfg.apiKey !== 'YOUR_API_KEY' ? cfg.apiKey : '';
+      if (fbProjectIdInput) fbProjectIdInput.value = cfg.projectId && cfg.projectId !== 'lsg-lan-centre' ? cfg.projectId : (cfg.projectId || '');
+      if (fbAuthDomainInput) fbAuthDomainInput.value = cfg.authDomain && cfg.authDomain !== 'lsg-lan-centre.firebaseapp.com' ? cfg.authDomain : '';
+      if (fbAppIdInput) fbAppIdInput.value = cfg.appId && cfg.appId !== '1:1234567890:web:abcdef123456' ? cfg.appId : '';
+    }
+    if (firebaseModalOverlay) firebaseModalOverlay.classList.add('active');
+  }
+
+  function closeFirebaseModal() {
+    if (firebaseModalOverlay) firebaseModalOverlay.classList.remove('active');
+  }
+
+  if (firebaseConfigBtn) firebaseConfigBtn.addEventListener('click', openFirebaseModal);
+  if (closeFirebaseModalBtn) closeFirebaseModalBtn.addEventListener('click', closeFirebaseModal);
+  if (cancelFirebaseBtn) cancelFirebaseBtn.addEventListener('click', closeFirebaseModal);
+
+  if (firebaseConfigForm) {
+    firebaseConfigForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const apiKey = fbApiKeyInput.value.trim();
+      const projectId = fbProjectIdInput.value.trim();
+      const authDomain = fbAuthDomainInput.value.trim() || `${projectId}.firebaseapp.com`;
+      const appId = fbAppIdInput.value.trim();
+
+      const newConfig = {
+        apiKey,
+        authDomain,
+        projectId,
+        storageBucket: `${projectId}.appspot.com`,
+        messagingSenderId: "1234567890",
+        appId: appId || "1:1234567890:web:lsg"
+      };
+
+      if (window.LSG_Firebase) {
+        const ok = window.LSG_Firebase.saveConfig(newConfig);
+        if (ok) {
+          initFirebaseSubscription();
+          showToast('🔥 Firebase Connected! Cloud storage is live.');
+          closeFirebaseModal();
+        } else {
+          showToast('Could not initialize Firebase. Check API key.');
+        }
+      }
+    });
+  }
+
   // Initial Load
   loadReservations();
+  if (window.LSG_Firebase && window.LSG_Firebase.isReady()) {
+    updateFirebaseUIStatus(true);
+  }
 
 });
