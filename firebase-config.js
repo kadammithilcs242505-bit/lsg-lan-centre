@@ -3,24 +3,24 @@
 // ============================================
 
 (function () {
-  // Default configuration (Replace with your Firebase Console Web App credentials)
-  // Get these from: Firebase Console -> Project Settings -> General -> Your apps -> SDK setup and configuration
+  // Live Firebase Configuration for lsg-lan-centre
   const defaultFirebaseConfig = {
-    apiKey: "YOUR_API_KEY",
+    apiKey: "AIzaSyAbnkNWNsNva25q4daK1nTPY1gaG5Y3q9Y",
     authDomain: "lsg-lan-centre.firebaseapp.com",
     projectId: "lsg-lan-centre",
-    storageBucket: "lsg-lan-centre.appspot.com",
-    messagingSenderId: "1234567890",
-    appId: "1:1234567890:web:abcdef123456"
+    storageBucket: "lsg-lan-centre.firebasestorage.app",
+    messagingSenderId: "723353078189",
+    appId: "1:723353078189:web:979812728f285bc59c3924",
+    measurementId: "G-CQVZJF944K"
   };
 
-  // Allow override from localStorage if set via Admin Dashboard
+  // Allow override from localStorage if customized
   let activeConfig = defaultFirebaseConfig;
   try {
     const savedCustomConfig = localStorage.getItem('lsg_firebase_config');
     if (savedCustomConfig) {
       const parsed = JSON.parse(savedCustomConfig);
-      if (parsed && parsed.projectId && parsed.projectId !== 'YOUR_PROJECT_ID') {
+      if (parsed && parsed.apiKey && parsed.apiKey.startsWith('AIzaSy')) {
         activeConfig = parsed;
       }
     }
@@ -34,11 +34,6 @@
   function initFirebase() {
     if (typeof firebase === 'undefined') {
       console.warn('Firebase SDK not loaded.');
-      return false;
-    }
-
-    if (!activeConfig || !activeConfig.apiKey || activeConfig.apiKey === 'YOUR_API_KEY') {
-      console.info('Firebase not configured yet. Using local storage fallback.');
       return false;
     }
 
@@ -56,7 +51,7 @@
     }
   }
 
-  // Attempt initial initialization
+  // Initial initialization
   initFirebase();
 
   // Public Firebase helper API for L.S.G
@@ -77,19 +72,76 @@
       return isFirebaseReady && db !== null;
     },
 
-    // 1. Save or update booking to Firestore
+    // 1. Save booking, customer registration, and payment transaction
     saveBooking: async function (booking) {
-      if (!this.isReady()) return false;
+      if (!this.isReady()) {
+        console.warn('Firebase not ready to save booking.');
+        return false;
+      }
       try {
-        const docId = booking.bookingId || ('LSG-' + Date.now());
+        const docId = booking.bookingId || ('LSG-BK-' + Math.floor(1000 + Math.random() * 9000));
+        const cust = booking.customer || {};
+
+        // Sanitize proof dataUrl to prevent exceeding Firestore 1MB document limit
+        const sanitizedBooking = { ...booking };
+        if (sanitizedBooking.proof && sanitizedBooking.proof.dataUrl) {
+          if (sanitizedBooking.proof.dataUrl.length > 400000) {
+            // Keep preview placeholder note if payload is too large
+            sanitizedBooking.proof = {
+              ...sanitizedBooking.proof,
+              dataUrl: 'images/payment-scanner.png',
+              dataOmitted: true,
+              dataNote: 'Full high-res proof stored locally / counter verified'
+            };
+          }
+        }
+
+        // A. Save Reservation into 'bookings' collection
         await db.collection('bookings').doc(docId).set({
-          ...booking,
+          ...sanitizedBooking,
+          bookingId: docId,
           updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         }, { merge: true });
-        console.log('✅ Booking stored in Firebase Firestore:', docId);
+        console.log('✅ [Firestore] Booking stored:', docId);
+
+        // B. Save / Register Customer into 'customers' collection
+        const custPhoneClean = (cust.phone || '').replace(/[^0-9]/g, '');
+        const customerDocId = custPhoneClean.length >= 8 ? custPhoneClean : ('CUST-' + docId.replace('LSG-BK-', ''));
+
+        await db.collection('customers').doc(customerDocId).set({
+          customerId: customerDocId,
+          name: cust.name || 'Gamer Customer',
+          phone: cust.phone || 'N/A',
+          email: cust.email || 'N/A',
+          discord: cust.discord || 'N/A',
+          latestBookingId: docId,
+          latestStation: booking.stationName || booking.stationId || 'PC Station',
+          latestSlot: `${booking.date || ''} (${booking.slot || ''})`,
+          latestAmount: booking.totalAmount || '₹0',
+          paymentMethod: booking.paymentMethod || 'Cash',
+          status: 'Active',
+          lastActive: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+        console.log('👤 [Firestore] Customer details registered in database:', customerDocId);
+
+        // C. Save Payment Record into 'payments' collection
+        const paymentDocId = 'PAY-' + docId.replace('LSG-BK-', '');
+        await db.collection('payments').doc(paymentDocId).set({
+          paymentId: paymentDocId,
+          bookingId: docId,
+          customerName: cust.name || 'Customer',
+          customerPhone: cust.phone || 'N/A',
+          amount: booking.totalAmount || '₹0',
+          method: booking.paymentMethod || 'Cash',
+          status: booking.paymentStatus || 'Pending Verification',
+          proofFileName: (booking.proof && booking.proof.fileName) || 'Payment Counter/Receipt',
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+        console.log('💳 [Firestore] Payment transaction logged:', paymentDocId);
+
         return true;
       } catch (err) {
-        console.error('Error saving booking to Firestore:', err);
+        console.error('Error saving booking/customer to Firestore:', err);
         return false;
       }
     },
@@ -113,7 +165,7 @@
       }
     },
 
-    // 3. Update status (e.g. Approved / Rejected)
+    // 3. Update status (Approved / Rejected) across bookings & payments
     updateBookingStatus: async function (bookingId, status) {
       if (!this.isReady()) return false;
       try {
@@ -121,7 +173,17 @@
           paymentStatus: status,
           updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         });
-        console.log(`✅ Updated booking ${bookingId} to ${status} in Firestore`);
+
+        // Also update matching payment record
+        const paymentDocId = 'PAY-' + bookingId.replace('LSG-BK-', '');
+        try {
+          await db.collection('payments').doc(paymentDocId).update({
+            status: status,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        } catch (pe) {}
+
+        console.log(`✅ [Firestore] Updated booking ${bookingId} to ${status}`);
         return true;
       } catch (err) {
         console.error('Error updating status in Firestore:', err);
@@ -134,7 +196,7 @@
       if (!this.isReady()) return false;
       try {
         await db.collection('bookings').doc(bookingId).delete();
-        console.log(`🗑️ Deleted booking ${bookingId} from Firestore`);
+        console.log(`🗑️ [Firestore] Deleted booking ${bookingId}`);
         return true;
       } catch (err) {
         console.error('Error deleting booking from Firestore:', err);
@@ -150,7 +212,7 @@
           ...inquiry,
           submittedAt: firebase.firestore.FieldValue.serverTimestamp()
         });
-        console.log('✅ Contact inquiry saved to Firestore');
+        console.log('✅ [Firestore] Contact inquiry saved');
         return true;
       } catch (err) {
         console.error('Error saving inquiry to Firestore:', err);
